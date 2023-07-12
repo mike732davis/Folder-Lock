@@ -16,9 +16,12 @@ attrib +h +s "Control Panel.{21EC2020-3AEA-1069-A2DD-08002B30309D}"
 echo Folder locked
 goto End
 :UNLOCK
-echo Enter password to Unlock Your Secure Folder
-set/p "pass=>"
-if NOT %pass%== YOUR-PASSWORD goto FAIL
+@echo off
+set "psCommand=powershell -Command "$pword = read-host 'Enter Password to Unlock folder' -AsSecureString ; ^
+    $BSTR=[System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($pword); ^
+        [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)""
+for /f "usebackq delims=" %%p in (`%psCommand%`) do set password=%%p
+if NOT %password%==ENTER_YOUR_PASSWORD goto FAIL
 attrib -h -s "Control Panel.{21EC2020-3AEA-1069-A2DD-08002B30309D}"
 ren "Control Panel.{21EC2020-3AEA-1069-A2DD-08002B30309D}" Private
 echo Folder Unlocked successfully
